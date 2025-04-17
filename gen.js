@@ -408,7 +408,7 @@ async function processWalletAndTasks(wallet, inviteCode, outputStream, index, to
 
 async function main() {
     // For chalk 5.x, use: chalk.magentaBright().bold()
-    console.log(chalk.magenta.bold('🎵 Auto Gen + Auto Task 🎵'));
+    console.log(chalk.magenta.bold('🎵 Auto Gen account 🎵'));
     console.log(chalk.magenta('-----------------------------------------------------'));
     
     try {
