@@ -21,15 +21,15 @@ async def read_proxies():
         print(Fore.RED + f"❌ Error reading proxy.txt: {str(e)}" + Style.RESET_ALL)
         return []
 
-async def read_tokens():
-    """Read tokens from tokens.txt."""
+async def read_tokens(file_name):
+    """Read tokens from the specified file."""
     try:
-        with open("tokens.txt", "r", encoding="utf-8") as f:
+        with open(file_name, "r", encoding="utf-8") as f:
             tokens = [line.strip() for line in f if line.strip() and not line.startswith("#")]
         return tokens
     except Exception as e:
-        print(Fore.RED + f"❌ Error reading tokens.txt: {str(e)}" + Style.RESET_ALL)
-        exit(1)
+        print(Fore.RED + f"❌ Error reading {file_name}: {str(e)}" + Style.RESET_ALL)
+        return []
 
 # Shared state for account statuses
 status_lock = threading.Lock()
@@ -310,7 +310,21 @@ class FireverseMusicBot:
 
 def main():
     global stop_display
-    # Prompt for proxy usage as the very first action
+    # Prompt for mode selection as the very first action
+    print()  # Blank line for clarity
+    while True:
+        print(Fore.CYAN + "Select mode:" + Style.RESET_ALL)
+        print(Fore.CYAN + "1. Run main account (token.txt)" + Style.RESET_ALL)
+        print(Fore.CYAN + "2. Run referral accounts (generated_wallets.txt)" + Style.RESET_ALL)
+        mode = input(Fore.CYAN + "Enter choice (1 or 2): " + Style.RESET_ALL).strip()
+        if mode in ["1", "2"]:
+            break
+        print(Fore.RED + "❌ Please enter '1' or '2'" + Style.RESET_ALL)
+
+    # Set token file based on mode
+    token_file = "token.txt" if mode == "1" else "generated_wallets.txt"
+
+    # Prompt for proxy usage
     print()  # Blank line for clarity
     while True:
         use_proxy = input(Fore.CYAN + "Use proxy (y/n)? " + Style.RESET_ALL).strip().lower()
@@ -318,7 +332,7 @@ def main():
             break
         print(Fore.RED + "❌ Please enter 'y' or 'n'" + Style.RESET_ALL)
 
-    # Start grid display thread only after prompt
+    # Start grid display thread only after prompts
     threading.Thread(target=print_grid, daemon=True).start()
 
     # Proceed with other outputs
@@ -329,9 +343,9 @@ def main():
         if not proxies:
             print(Fore.RED + "❌ No proxies found, running without proxies" + Style.RESET_ALL)
 
-    tokens = asyncio.run(read_tokens())
+    tokens = asyncio.run(read_tokens(token_file))
     if not tokens:
-        print(Fore.RED + "❌ No tokens found" + Style.RESET_ALL)
+        print(Fore.RED + f"❌ No tokens found in {token_file}" + Style.RESET_ALL)
         stop_display = True
         exit(1)
 
