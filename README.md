@@ -18,7 +18,7 @@ to run bot
 
     python3 main.py
 
-drop your token to tokens.txt
+drop your token to token.txt
 
     eyxxx1
     eyxxx2
